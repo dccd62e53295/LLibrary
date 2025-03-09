@@ -1,6 +1,8 @@
 buildscript {
   repositories {
     jcenter()
+    mavenCentral()
+    mavenLocal()
     maven {
       name = "forge"
       url = "http://files.minecraftforge.net/maven"
@@ -21,7 +23,7 @@ apply plugin: "maven-publish"
 apply plugin: "com.matthewprenger.cursegradle"
 
 import groovy.json.JsonSlurper
-
+/*
 def secretFile = file "secret.json"
 project.ext.secret = null
 if (secretFile.exists()) {
@@ -29,7 +31,7 @@ if (secretFile.exists()) {
     project.ext.secret = new JsonSlurper().parse it
   }
 }
-
+*/
 def mod_file = getModFile()
 def mod_version = getModField("VERSION", mod_file)
 version = "$mod_version-1.12.2"
@@ -45,12 +47,12 @@ minecraft {
   runDir = "minecraft"
   mappings = minecraft_mappings
   makeObfSourceJar = false
-
+/*
   if (secret) {
     replace '${fingerprint}', secret.signSHA1
     replaceIn mod_file
   }
-
+*/
   clientJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
   serverJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
 }
@@ -60,12 +62,16 @@ configurations {
 }
 
 repositories {
+   mavenLocal()
+   mavenCentral()
   maven { url = "https://maven.mcmoddev.com" }
 }
 
 dependencies {
-  deobfCompile "net.ilexiconn:llibrary-core:1.0.11-1.12.2"
-  embedMod "net.ilexiconn:llibrary-core:1.0.11-1.12.2"
+//  deobfCompile "net.ilexiconn:llibrary-core:1.0.11-1.12.2"
+//  embedMod "net.ilexiconn:llibrary-core:1.0.11-1.12.2"
+compileOnly files( "libs/llibrary-core-1.0.11-1.12.2-deobf.jar" )
+embedMod files( "libs/llibrary-core-1.0.11-1.12.2.jar" )
 }
 
 processResources {
@@ -99,7 +105,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
   classifier = "javadoc"
   from javadoc.getDestinationDir()
 }
-
+/*
 task signJar(type: SignJar, dependsOn: reobfJar) {
   if (secret) {
     keyStore = secret.keyStore
@@ -110,7 +116,7 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
     outputFile = jar.archivePath
   }
 }
-
+*/
 jar {
   from(configurations.embedMod.files) {
     include '*'
@@ -128,7 +134,7 @@ artifacts {
   archives devJar
   archives javadocJar
 }
-
+/*
 if (secret) {
   publishing {
     publications {
@@ -187,7 +193,7 @@ curseforge {
     addArtifact(javadocJar) { displayName = "LLibrary $curse_version Javadoc" }
   }
 }
-
+*/
 String getModFile() {
   String path = ""
   FileTree tree = fileTree(dir: 'src/main/java')
